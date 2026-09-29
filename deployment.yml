@@ -1,0 +1,44 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: workshop1
+  labels:
+    gateway: aalwg-gtw
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: workshop1
+  name: my-mcp-deployment
+  labels:
+    app: my-mcp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-mcp
+  template:
+    metadata:
+      labels:
+        app: my-mcp
+    spec:
+      containers:
+        - name: my-mcp
+          image: andyted/my-mcp:1.0
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: workshop1
+  name: my-mcp-service
+spec:
+  type: ClusterIP
+  selector:
+    app: my-mcp
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
